@@ -1,0 +1,7 @@
+baseURL = "https://kan-bayashi.github.io/NonARSeq2SeqVC/"
+languageCode = "en-us"
+title = "Non-autoregressive sequence-to-sequence voice conversion"
+theme = "paper"
+
+[markup.goldmark.renderer]
+unsafe= true
