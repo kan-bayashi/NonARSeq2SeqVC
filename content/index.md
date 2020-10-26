@@ -36,7 +36,7 @@ We use [ParallelWaveGAN](https://github.com/kan-bayashi/ParallelWaveGAN) as the 
 |<audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00976_gen.wav"/></audio>|<audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00976_gen.wav"/></audio>| |
 | **Transformer** | **Transformer** |
 |<audio controls="" ><source src="audio/transformer_m2f/ETRAB00976_gen.wav"/></audio>|<audio controls="" ><source src="audio/transformer_f2m/ETRAB00976_gen.wav"/></audio>| |
-| **Propoed** | **Proposed** |
+| **Proposed** | **Proposed** |
 |<audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00976_gen.wav"/></audio>|<audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00976_gen.wav"/></audio>| |
 
 #### そのうちに、日が暮れて、寒い風が、ヒューヒュー、吹きはじめました。
@@ -49,7 +49,7 @@ We use [ParallelWaveGAN](https://github.com/kan-bayashi/ParallelWaveGAN) as the 
 |<audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00982_gen.wav"/></audio>|<audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00982_gen.wav"/></audio>| |
 | **Transformer** | **Transformer** |
 |<audio controls="" ><source src="audio/transformer_m2f/ETRAB00982_gen.wav"/></audio>|<audio controls="" ><source src="audio/transformer_f2m/ETRAB00982_gen.wav"/></audio>| |
-| **Propoed** | **Proposed** |
+| **Proposed** | **Proposed** |
 |<audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00982_gen.wav"/></audio>|<audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00982_gen.wav"/></audio>| |
 
 #### 小柄な男は、部屋の中を、しげしげと、覗き込みながら言った。
@@ -62,7 +62,7 @@ We use [ParallelWaveGAN](https://github.com/kan-bayashi/ParallelWaveGAN) as the 
 |<audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00990_gen.wav"/></audio>|<audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00990_gen.wav"/></audio>| |
 | **Transformer** | **Transformer** |
 |<audio controls="" ><source src="audio/transformer_m2f/ETRAB00990_gen.wav"/></audio>|<audio controls="" ><source src="audio/transformer_f2m/ETRAB00990_gen.wav"/></audio>| |
-| **Propoed** | **Proposed** |
+| **Proposed** | **Proposed** |
 |<audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00990_gen.wav"/></audio>|<audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00990_gen.wav"/></audio>| |
 
 ## Author
