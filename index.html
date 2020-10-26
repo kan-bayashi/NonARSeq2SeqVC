@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <title>Non-autoregressive sequence-to-sequence voice conversion</title>
+    
+    <meta name="description" content="Non-autoregressive sequence-to-sequence voice conversion  Tomoki Hayashi (TARVO Inc. / Nagoya University) Wen-Chin Huang (Nagoya University) Kazuhiro Kobayashi (TARVO Inc. / Nagoya University) Tomoki Toda (Nagoya University)  Abstract This paper proposes a novel voice conversion (VC) method based on non-autoregressive sequence-to-sequence (NAR-S2S) models. Inspired by the great success of NAR-S2S models such as FastSpeech in text-to-speech (TTS), we extend the FastSpeech2 model for the VC problem. We introduce the convolution-augmented Transformer (Conformer) instead of the Transformer, making it possible to capture both local and global context information from the input sequence.">
+    <meta name="author" content="">
+    
+    <link href="https://kan-bayashi.github.io/NonARSeq2SeqVC/an-old-hope.min.css" rel="stylesheet">
+    <link href="https://kan-bayashi.github.io/NonARSeq2SeqVC/style.css" rel="stylesheet">
+    <link href="https://kan-bayashi.github.io/NonARSeq2SeqVC/custom.css" rel="stylesheet">
+    
+    <link rel="apple-touch-icon" href="https://kan-bayashi.github.io/NonARSeq2SeqVC/apple-touch-icon.png">
+    <link rel="icon" href="https://kan-bayashi.github.io/NonARSeq2SeqVC/favicon.ico">
+    <meta name="generator" content="Hugo 0.76.5" />
+    
+    
+    
+    <script>
+      function setTheme() {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.classList.add('dark');
+          return;
+        }
+
+        const time = new Date();
+        const prev = localStorage.getItem('date');
+        const date = String(time.getMonth() + 1) + '.' + String(time.getDate());
+
+        const now = time.getTime();
+        let sunrise;
+        let sunset;
+
+        function setBodyClass() {
+          if (now > sunrise && now < sunset) return;
+          document.body.classList.add('dark');
+        }
+
+        if (date !== prev) {
+          fetch('https://api.ipgeolocation.io/astronomy?apiKey=5ed37d85103e4defa5df4c5298ed5215')
+            .then((res) => res.json())
+            .then((data) => {
+              sunrise = data.sunrise.split(':').map(Number);
+              sunset = data.sunset.split(':').map(Number);
+            })
+            .catch(() => {
+              sunrise = [7, 0];
+              sunset = [19, 0];
+            })
+            .finally(() => {
+              sunrise = time.setHours(sunrise[0], sunrise[1], 0);
+              sunset = time.setHours(sunset[0], sunset[1], 0);
+              setBodyClass();
+              localStorage.setItem('sunrise', sunrise);
+              localStorage.setItem('sunset', sunset);
+            });
+          localStorage.setItem('date', date);
+        } else {
+          sunrise = Number(localStorage.getItem('sunrise'));
+          sunset = Number(localStorage.getItem('sunset'));
+          setBodyClass();
+        }
+      }
+    </script>
+  </head>
+  <body class="single">
+    <script>
+      setTheme();
+    </script>
+    <header class="header">
+      <nav class="nav">
+        <p class="logo"><a href="https://kan-bayashi.github.io/NonARSeq2SeqVC/">Non-autoregressive sequence-to-sequence voice conversion</a></p>
+      </nav>
+    </header>
+    <main class="main">
+
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title"></h1>
+    <div class="post-meta">October 25, 2020</div>
+  </header>
+  <div class="post-content"><h1 id="non-autoregressive-sequence-to-sequence-voice-conversion">Non-autoregressive sequence-to-sequence voice conversion</h1>
+<ul>
+<li>Tomoki Hayashi (TARVO Inc. / Nagoya University)</li>
+<li>Wen-Chin Huang (Nagoya University)</li>
+<li>Kazuhiro Kobayashi (TARVO Inc. / Nagoya University)</li>
+<li>Tomoki Toda (Nagoya University)</li>
+</ul>
+<h2 id="abstract">Abstract</h2>
+<p><img src="figs/overview.png" alt=""></p>
+<p>This paper proposes a novel voice conversion (VC) method based on non-autoregressive sequence-to-sequence (NAR-S2S) models. Inspired by the great success of NAR-S2S models such as FastSpeech in text-to-speech (TTS), we extend the FastSpeech2 model for the VC problem. We introduce the convolution-augmented Transformer (Conformer) instead of the Transformer, making it possible to capture both local and global context information from the input sequence. Furthermore, we extend variance predictors to variance converters to explicitly convert the source speaker&rsquo;s prosody components such as pitch and energy into the target speaker. The experimental evaluation with the Japanese speaker dataset, which consists of male and female speakers of 1,000 utterances, demonstrates that the proposed model enables us to perform more stable, faster, and better conversion than autoregressive S2S (AR-S2S) models such as Tacotron2 and Transformer.</p>
+<h2 id="audio-samples-japanese">Audio samples (Japanese)</h2>
+<ul>
+<li><strong>Target</strong>: Target speech (24,000 Hz).</li>
+<li><strong>Tacotron2</strong>: Converted speech by Tacotron2-based AR-S2S model.</li>
+<li><strong>Transformer</strong>: Converted speech by Transformer-based AR-S2S model.</li>
+<li><strong>Proposed</strong>: Converted speech by the proposed NAR-S2S model.</li>
+</ul>
+<p>The neural vocoder is the same among the models.<br>
+We use <a href="https://github.com/kan-bayashi/ParallelWaveGAN">ParallelWaveGAN</a> as the neural vocoder.</p>
+<h4 id="たとえばプログラムを書く仕事は機械なしでもやろうと思えばできる">たとえば、プログラムを書く仕事は、機械なしでも、やろうと思えばできる。</h4>
+<table>
+<thead>
+<tr>
+<th>Male-&gt;Female</th>
+<th>Female-&gt;Male</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target</strong></td>
+<td><strong>Target</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/female_gt/ETRAB00976.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/male_gt/ETRAB00976.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Tacotron2</strong></td>
+<td><strong>Tacotron2</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00976_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00976_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Transformer</strong></td>
+<td><strong>Transformer</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/transformer_m2f/ETRAB00976_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/transformer_f2m/ETRAB00976_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Propoed</strong></td>
+<td><strong>Proposed</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00976_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00976_gen.wav"/></audio></td>
+</tr>
+</tbody>
+</table>
+<h4 id="そのうちに日が暮れて寒い風がヒューヒュー吹きはじめました">そのうちに、日が暮れて、寒い風が、ヒューヒュー、吹きはじめました。</h4>
+<table>
+<thead>
+<tr>
+<th>Male-&gt;Female</th>
+<th>Female-&gt;Male</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target</strong></td>
+<td><strong>Target</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/female_gt/ETRAB00982.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/male_gt/ETRAB00982.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Tacotron2</strong></td>
+<td><strong>Tacotron2</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00982_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00982_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Transformer</strong></td>
+<td><strong>Transformer</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/transformer_m2f/ETRAB00982_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/transformer_f2m/ETRAB00982_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Propoed</strong></td>
+<td><strong>Proposed</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00982_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00982_gen.wav"/></audio></td>
+</tr>
+</tbody>
+</table>
+<h4 id="小柄な男は部屋の中をしげしげと覗き込みながら言った">小柄な男は、部屋の中を、しげしげと、覗き込みながら言った。</h4>
+<table>
+<thead>
+<tr>
+<th>Male-&gt;Female</th>
+<th>Female-&gt;Male</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target</strong></td>
+<td><strong>Target</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/female_gt/ETRAB00990.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/male_gt/ETRAB00990.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Tacotron2</strong></td>
+<td><strong>Tacotron2</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/tacotron2_m2f/ETRAB00990_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/tacotron2_f2m/ETRAB00990_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Transformer</strong></td>
+<td><strong>Transformer</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/transformer_m2f/ETRAB00990_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/transformer_f2m/ETRAB00990_gen.wav"/></audio></td>
+</tr>
+<tr>
+<td><strong>Propoed</strong></td>
+<td><strong>Proposed</strong></td>
+</tr>
+<tr>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_m2f/ETRAB00990_gen.wav"/></audio></td>
+<td><audio controls="" ><source src="audio/conformer_fastspeech2_f2m/ETRAB00990_gen.wav"/></audio></td>
+</tr>
+</tbody>
+</table>
+<h2 id="author">Author</h2>
+<p>Tomoki Hayashi (<a href="https://github.com/kan-bayashi">@kan-bayashi</a>)<br>
+e-mail: <a href="mailto:hayashi.tomoki@g.sp.m.is.nagoya-u.ac.jp">hayashi.tomoki@g.sp.m.is.nagoya-u.ac.jp</a></p>
+</div>
+  
+</article></main>
+<footer class="footer">
+  <span>&copy; 2020 <a href="https://kan-bayashi.github.io/NonARSeq2SeqVC/">Non-autoregressive sequence-to-sequence voice conversion</a></span>
+  <span>&middot;</span>
+  <span>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</span>
+  <span>&middot;</span>
+  <span>Theme️ <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper</a></span>
+</footer>
+<script src="https://kan-bayashi.github.io/NonARSeq2SeqVC/highlight.min.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Non-autoregressive sequence-to-sequence voice conversion</title>
+    <link>https://kan-bayashi.github.io/NonARSeq2SeqVC/</link>
+    <description>Recent content on Non-autoregressive sequence-to-sequence voice conversion</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://kan-bayashi.github.io/NonARSeq2SeqVC/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>https://kan-bayashi.github.io/NonARSeq2SeqVC/</link>
+      <pubDate>Sun, 25 Oct 2020 00:00:00 +0900</pubDate>
+      
+      <guid>https://kan-bayashi.github.io/NonARSeq2SeqVC/</guid>
+      <description>Non-autoregressive sequence-to-sequence voice conversion  Tomoki Hayashi (TARVO Inc. / Nagoya University) Wen-Chin Huang (Nagoya University) Kazuhiro Kobayashi (TARVO Inc. / Nagoya University) Tomoki Toda (Nagoya University)  Abstract This paper proposes a novel voice conversion (VC) method based on non-autoregressive sequence-to-sequence (NAR-S2S) models. Inspired by the great success of NAR-S2S models such as FastSpeech in text-to-speech (TTS), we extend the FastSpeech2 model for the VC problem. We introduce the convolution-augmented Transformer (Conformer) instead of the Transformer, making it possible to capture both local and global context information from the input sequence.</description>
+    </item>
+    
+  </channel>
+</rss>
